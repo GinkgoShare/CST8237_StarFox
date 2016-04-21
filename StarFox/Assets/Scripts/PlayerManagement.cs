@@ -13,14 +13,14 @@ public class PlayerManagement : MonoBehaviour {
 //	float _nextFire = 0.5f;
 
 	void FixedUpdate() {
-		//Rigidbody rigidBody;
-		//float moveVertical = Input.GetAxis ("Vertical");
+		Rigidbody rigidBody;
+		float moveVertical = Input.GetAxis ("Vertical");
 		float moveHorizontal = -Input.GetAxis ("Horizontal");
-		Rigidbody rigidBody = gameObject.GetComponent<Rigidbody> ();
-		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, 0.0f);
+		rigidBody = gameObject.GetComponent<Rigidbody> ();
+		Vector3 movement = new Vector3 (moveHorizontal, moveVertical, 0.0f);
 
 		rigidBody.velocity = movement * velocity;
-		rigidBody.rotation = Quaternion.Euler (0.0f, 0.0f, rigidBody.velocity.x * -tilt);
+		rigidBody.rotation = Quaternion.Euler (rigidBody.velocity.y * -tilt, 0.0f, rigidBody.velocity.x * -tilt);
 		rigidBody.position = new Vector3 (rigidBody.position.x, rigidBody.position.y, rigidBody.position.z);
 	}
 

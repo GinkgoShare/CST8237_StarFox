@@ -7,6 +7,8 @@ public class PlayerManagement : MonoBehaviour {
 	public float tiltY;
 	public float velocity;
 
+	public GameObject mainCamera;
+
 //	public GameObject shot;
 //	public Transform shotSpawn;
 //	public float fireRate = 0.5f;
@@ -32,6 +34,20 @@ public class PlayerManagement : MonoBehaviour {
 			rigidBody.position.x + (moveHorizontal * 3), 
 			rigidBody.position.y + (moveVertical * -3), 
 			rigidBody.position.z + -3.0f
+		);
+
+		float cameraX = rigidBody.position.x + (25 * moveHorizontal);
+//		if (moveHorizontal > 0.1f || moveHorizontal < -0.1f) {
+//			cameraX += 25 * moveHorizontal;
+//		}
+		float cameraY = rigidBody.position.y + 15 + (25 * -moveVertical);
+//		if (moveVertical > 0.1f || moveVertical < -0.1f) {
+//			cameraY += 25 * -moveVertical;
+//		}
+		mainCamera.transform.position = new Vector3 (
+			Mathf.Clamp(cameraX, rigidBody.position.x-25, rigidBody.position.x+25), 
+			Mathf.Clamp(cameraY, rigidBody.position.y-25, rigidBody.position.y+25), 
+			rigidBody.position.z + 50
 		);
 
 		//transform.Translate(new Vector3(moveHorizontal * 3, moveVertical * -3, -3.0f));

@@ -8,12 +8,32 @@ public class PlayerManagement : MonoBehaviour {
 	public float velocity;
 
 	public GameObject mainCamera;
+	public GameObject ring;
 
-//	public GameObject shot;
-//	public Transform shotSpawn;
-//	public float fireRate = 0.5f;
-//
-//	float _nextFire = 0.5f;
+	public GameObject shot;
+	public Transform shotSpawn;
+	public float fireRate = 0.5f;
+
+	float _nextFire = 0.5f;
+
+	void Start() {
+		GameObject parent = this.gameObject;
+		for (int i = 0; i < 50; i++) {
+			GameObject newRing = (GameObject)Instantiate (
+				ring, 
+				new Vector3 (
+					Random.Range((parent.transform.position.x - 200.0f), (parent.transform.position.x + 200.0f)),
+					//Mathf.Clamp (parent.transform.position.x, (parent.transform.position.x - 200.0f), (parent.transform.position.x + 200.0f)),
+					Random.Range((parent.transform.position.y - 200.0f), (parent.transform.position.y + 200.0f)),
+					//Mathf.Clamp (parent.transform.position.y, (parent.transform.position.y - 200.0f), (parent.transform.position.y + 200.0f)),
+					parent.transform.position.z - 400.0f
+				),
+				ring.transform.rotation
+			);
+			newRing.transform.parent = parent.transform;
+			parent = newRing;
+		}
+	}
 
 	void FixedUpdate() {
 		Rigidbody rigidBody;
@@ -29,11 +49,11 @@ public class PlayerManagement : MonoBehaviour {
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 
 		rigidBody.velocity = movement * velocity;
-		rigidBody.rotation = Quaternion.Euler (rigidBody.velocity.z * -tiltY, 0.0f, rigidBody.velocity.x * -tiltX);
+		rigidBody.rotation = Quaternion.Euler (rigidBody.velocity.z * -tiltY, rigidBody.velocity.x * -tiltX / 2, rigidBody.velocity.x * -tiltX);
 		rigidBody.position = new Vector3 (
-			rigidBody.position.x + (moveHorizontal * 3), 
-			rigidBody.position.y + (moveVertical * -3), 
-			rigidBody.position.z + -3.0f
+			rigidBody.position.x + (moveHorizontal * 5.0f), 
+			rigidBody.position.y + (moveVertical * -5.0f), 
+			rigidBody.position.z + -5.0f
 		);
 
 		float cameraX = rigidBody.position.x + (25 * moveHorizontal);
@@ -53,10 +73,10 @@ public class PlayerManagement : MonoBehaviour {
 		//transform.Translate(new Vector3(moveHorizontal * 3, moveVertical * -3, -3.0f));
 	}
 
-//	void Update() {
-//		if (Input.GetButton("Fire1") && Time.time > _nextFire) {
-//			_nextFire = Time.time + fireRate;
-//			Instantiate (shot, shotSpawn.position, shotSpawn.rotation);
-//		}
-//	}
+	void Update() {
+		if (Input.GetButton("Fire1") && Time.time > _nextFire) {
+			_nextFire = Time.time + fireRate;
+			Instantiate (shot, shotSpawn.position, shotSpawn.rotation);
+		}
+	}
 }

@@ -74,7 +74,7 @@ public class PlayerManagement : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetButton("Fire1") && Time.time > _nextFire) {
+		if (Input.GetKeyDown("space") && Time.time > _nextFire) {
 			_nextFire = Time.time + fireRate;
 			Instantiate (shot, shotSpawn.position, shotSpawn.rotation);
 		}

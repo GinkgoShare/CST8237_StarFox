@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerManagement : MonoBehaviour {
@@ -6,6 +7,8 @@ public class PlayerManagement : MonoBehaviour {
 	public float tiltX;
 	public float tiltY;
 	public float velocity;
+
+	public Text scoreText;
 
 	public GameObject ring;
 	public GameObject mainCamera;
@@ -17,6 +20,7 @@ public class PlayerManagement : MonoBehaviour {
 	public Transform shotSpawnLeft;
 	public Transform shotSpawnRight;
 
+	private int _score = 0;
 	private float _nextFire = 0.5f;
 
 	void Start() {
@@ -69,12 +73,34 @@ public class PlayerManagement : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKeyDown("space") && Time.time > _nextFire) {
+		if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire) {
+			Rigidbody rigidBody = this.GetComponent<Rigidbody> ();
+			Vector3 vecVel = new Vector3 (rigidBody.velocity.x, rigidBody.velocity.y * 600, rigidBody.velocity.z);
 			_nextFire = Time.time + fireRate;
 			GameObject shot = Instantiate (shotLeft, shotSpawnLeft.position, shotLeft.transform.rotation) as GameObject;
+			shot.GetComponent<Rigidbody> ().velocity = -transform.forward * 600.0f;
 			//shot.transform.parent = this.transform;
 			shot = Instantiate (shotRight, shotSpawnRight.position, shotRight.transform.rotation) as GameObject;
+			shot.GetComponent<Rigidbody> ().velocity = -transform.forward * 600.0f;
 			//shot.transform.parent = this.transform;
+		}
+	}
+
+//	void OnCollisionEnter(Collision other) {
+//		Debug.Log ("In collision");
+//		if (other.gameObject.CompareTag ("Powerup1")) {
+//			Debug.Log ("In collision");
+//			_score += 25;
+//			scoreText.text = string.Format ("{0:000000}", _score);
+//		}
+//	}
+
+	void OnTriggerEnter(Collider other) {
+		Debug.Log ("In collision");
+		if (other.gameObject.CompareTag ("Powerup1")) {
+			Debug.Log ("In collision");
+			_score += 25;
+			scoreText.text = string.Format ("{0:000000}", _score);
 		}
 	}
 }

@@ -5,11 +5,6 @@ public class BarrelRoll : MonoBehaviour {
 
 	public float speed;
 	public GameObject ship;
-
-	// barrel roll
-	public float barrelRollDuration = 1.0f;
-	public bool inBarrelRoll = false;
-	private float movementAxis;
 	
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -21,69 +16,19 @@ public class BarrelRoll : MonoBehaviour {
 //			transform.position = Vector3.Lerp (this.transform.position, _endPosition, currentProgress);
 //		}
 
-		if (Input.GetKey (KeyCode.B)) {
-//			_inBarrelRole = true;
+		if (Input.GetKey (KeyCode.X)) {
 			if (ship.transform.parent == null) ship.transform.parent = this.transform;
-			if (Input.GetKey (KeyCode.LeftArrow)) {
-				transform.Rotate (Vector3.back * speed);
-				transform.Translate (Vector3.right * speed, Space.World);
-//				_endPosition = new Vector3 (this.transform.position.x - 50.0f, this.transform.position.y, this.transform.position.z);
-//				_endRotation = Quaternion.Euler(new Vector3 (this.transform.rotation.x, this.transform.rotation.y, this.transform.rotation.z));
-			} else if (Input.GetKey (KeyCode.RightArrow)) {
-				transform.Rotate (Vector3.forward * speed);
-				transform.Translate (Vector3.left * speed, Space.World);
-//				_endPosition = new Vector3 (this.transform.position.x + 50.0f, this.transform.position.y, this.transform.position.z);
-//				_endRotation = Quaternion.Euler(new Vector3 (this.transform.rotation.x, this.transform.rotation.y, this.transform.rotation.z));
-			}
-//			if(!inBarrelRoll)
-//			{
-//				if (Input.GetKeyUp(KeyCode.F ))
-//				{
-//					StartCoroutine("barrelRoll");
-//				}
-//			}
+
+			float moveVertical = Input.GetAxis ("Vertical");
+			float moveHorizontal = -Input.GetAxis ("Horizontal");
+			transform.position = new Vector3 (
+				transform.position.x + (moveHorizontal * 10.0f), 
+				transform.position.y + (moveVertical * -5.0f), 
+				transform.position.z + -5.0f
+			);
+			transform.Rotate (new Vector3(0.0f, 0.0f, -moveHorizontal) * speed);
 		} else {
 			ship.transform.parent = null;
 		}
-	}
-
-	IEnumerator barrelRoll()
-	{
-		inBarrelRoll = true;
-		float t = 0.0f;
-		Vector3 initialRotation = transform.localRotation.eulerAngles;
-		Vector3 goalRotation = initialRotation;
-		goalRotation.z += 180.0f;
-		Vector3 currentRotation = initialRotation;
-
-		while(t < barrelRollDuration/2.0f)
-		{
-			currentRotation.z = Mathf.Lerp(initialRotation.z,goalRotation.z,t/(barrelRollDuration/2.0f));
-			transform.localRotation = Quaternion.Euler(currentRotation);
-			t += Time.deltaTime;
-			yield return null;
-		}
-		t = 0;
-
-		initialRotation = transform.localRotation.eulerAngles;
-		goalRotation = initialRotation;
-		goalRotation.z += 180.0f ;
-
-		while(t < barrelRollDuration/2.0f)
-		{
-			currentRotation.z = Mathf.Lerp(initialRotation.z,goalRotation.z,t/(barrelRollDuration/2.0f));
-			transform.localRotation = Quaternion.Euler(currentRotation);
-			t += Time.deltaTime;
-			yield return null;
-		}
-
-		inBarrelRoll = false;
-		ResetRotation();
-
-	}
-
-	void ResetRotation()
-	{
-		transform.localRotation = Quaternion.identity;
 	}
 }

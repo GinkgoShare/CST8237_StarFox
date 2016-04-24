@@ -56,7 +56,7 @@ public class PlayerManagement : MonoBehaviour {
 			rigidBody.position.z + -5.0f
 		);
 
-		float cameraX = rigidBody.position.x + (25 * moveHorizontal);
+		float cameraX = rigidBody.position.x + 25.0f * moveHorizontal;
 		float cameraY = rigidBody.position.y + 15 + (25 * -moveVertical);
 		mainCamera.transform.position = new Vector3 (
 			Mathf.Clamp (cameraX, rigidBody.position.x - 25.0f, rigidBody.position.x + 25.0f), 
@@ -65,6 +65,7 @@ public class PlayerManagement : MonoBehaviour {
 		);
 
 		barrelRoller.transform.position = new Vector3(transform.position.x, transform.position.y + 1.0f, transform.position.z);
+		barrelRoller.transform.rotation = this.transform.rotation;
 	}
 
 	void Update() {

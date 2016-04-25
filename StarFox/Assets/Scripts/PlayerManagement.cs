@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerManagement : MonoBehaviour {
 
@@ -11,6 +11,7 @@ public class PlayerManagement : MonoBehaviour {
 	public float enemySpawnRate;
 
 	public Text scoreText;
+	public Text levelText;
 
 	public GameObject mainCamera;
 	public GameObject barrelRoller;
@@ -24,10 +25,18 @@ public class PlayerManagement : MonoBehaviour {
 	public Transform enemySpawnRight;
 
 	private int _score = 0;
+	private int _level = 1;
+	private float _shotSpeed = 1000.0f;
 	private bool _isEnemyLeft = false;
 	private float _nextFire;
 	private float _nextEnemySpawn;
 	private bool _shouldSpawnEnemies = false;
+	private GameObject _ringLayoutManager;
+	private Queue<GameObject> _enemies = new Queue<GameObject>();
+
+	void Start() {
+		_ringLayoutManager = GameObject.FindGameObjectWithTag ("Layout");
+	}
 
 	void FixedUpdate() {
 		float moveVertical = Input.GetAxis ("Vertical");
@@ -63,42 +72,50 @@ public class PlayerManagement : MonoBehaviour {
 	void Update() {
 		if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire) {
 			Rigidbody rigidBody = this.GetComponent<Rigidbody> ();
-			Vector3 vecVel = new Vector3 (rigidBody.velocity.x, rigidBody.velocity.y * 600, rigidBody.velocity.z);
 			_nextFire = Time.time + fireRate;
 			GameObject shot = Instantiate (shotLeft, shotSpawnLeft.position, shotLeft.transform.rotation) as GameObject;
-			shot.GetComponent<Rigidbody> ().velocity = -transform.forward * 600.0f;
-			//shot.transform.parent = this.transform;
+			shot.GetComponent<Rigidbody> ().velocity = -transform.forward * _shotSpeed;
 			shot = Instantiate (shotRight, shotSpawnRight.position, shotRight.transform.rotation) as GameObject;
-			shot.GetComponent<Rigidbody> ().velocity = -transform.forward * 600.0f;
-			//shot.transform.parent = this.transform;
+			shot.GetComponent<Rigidbody> ().velocity = -transform.forward * _shotSpeed;
 		}
 		if (Time.time > _nextEnemySpawn) {
-			GameObject shot = Instantiate (
-				enemy, 
-				(_isEnemyLeft ? enemySpawnLeft.position : enemySpawnRight.position), 
-				Quaternion.identity
-			) as GameObject;
+			GameObject newEnemy;
+			Vector3 spawnPos = (_isEnemyLeft ? enemySpawnLeft.position : enemySpawnRight.position);
+			if (_enemies.Count > 0) {
+				newEnemy = _enemies.Dequeue ();
+				newEnemy.transform.position = spawnPos;
+				//newEnemy.transform.rotation = Quaternion.identity;
+				newEnemy.GetComponent<MoveEnemy>().SetEndPositionForLerp(spawnPos);
+				newEnemy.SetActive (true);
+			} else {
+				Instantiate (enemy, spawnPos, Quaternion.identity);
+			}
 			_nextEnemySpawn = Time.time + enemySpawnRate;
 			_isEnemyLeft = !_isEnemyLeft;
 		}
+
+		if (_ringLayoutManager.GetComponent<InitRings> ().HasPlayerPassedLayout (this.transform.position.z)) {
+			//_shotSpeed += 25.0f;
+			levelText.text = string.Format ("Level {0:00}", ++_level);
+			_ringLayoutManager.GetComponent<InitRings> ().SetRingLayout (this.gameObject);
+		}
 	}
 
-//	void OnCollisionEnter(Collision other) {
-//		Debug.Log ("In collision");
-//		if (other.gameObject.CompareTag ("Powerup1")) {
-//			Debug.Log ("In collision");
-//			_score += 25;
-//			scoreText.text = string.Format ("{0:000000}", _score);
-//		}
-//	}
-
 	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.CompareTag ("Powerup1")) {
+		if (other.gameObject.CompareTag ("Ring")) {
 			_score += 25;
 			//other.gameObject.SetActive (false);
 			scoreText.text = string.Format ("{0:000000}", _score);
 		} else if (other.gameObject.CompareTag ("BoltEnemy")) {
 			this.gameObject.SetActive (false);
 		}
+	}
+
+	public int GetLevel() {
+		return _level;
+	}
+
+	public void PushEnemy(GameObject enemy) {
+		_enemies.Enqueue (enemy);
 	}
 }

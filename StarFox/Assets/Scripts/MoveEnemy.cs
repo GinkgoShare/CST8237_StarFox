@@ -32,24 +32,28 @@ public class MoveEnemy : MonoBehaviour {
 		} else {
 			Rigidbody rigidBody = gameObject.GetComponent<Rigidbody> ();
 			rigidBody.position = new Vector3 (
-				(rigidBody.position.x < _playerObject.transform.position.x - 20.0f ? 
-					rigidBody.position.x + 1.0f : (
-						rigidBody.position.x > _playerObject.transform.position.x + 20.0f ? rigidBody.position.x - 1.0f : rigidBody.position.x
+				(rigidBody.position.x < _playerObject.transform.position.x - 1.0f ? 
+					rigidBody.position.x + 2.0f : (
+						rigidBody.position.x > _playerObject.transform.position.x + 1.0f ? 
+						rigidBody.position.x - 2.0f : rigidBody.position.x
 					)
 				), 
-				(rigidBody.position.y < _playerObject.transform.position.y - 20.0f ? 
-					rigidBody.position.y + 1.0f : (
-						rigidBody.position.y > _playerObject.transform.position.y + 20.0f ? rigidBody.position.y - 1.0f : rigidBody.position.y)
+				(rigidBody.position.y < _playerObject.transform.position.y - 1.0f ? 
+					rigidBody.position.y + 2.0f : (
+						rigidBody.position.y > _playerObject.transform.position.y + 1.0f ? 
+						rigidBody.position.y - 2.0f : rigidBody.position.y)
 				), 
 				rigidBody.position.z + -5.0f
 			);
-//			if (transform.position.x < _playerObject.transform.position.x - 20.0f) transform.Translate (Vector3.right);
-//			else if (transform.position.x > _playerObject.transform.position.x + 20.0f) transform.Translate (Vector3.left);
-//			if (transform.position.y < _playerObject.transform.position.y - 20.0f) transform.Translate (Vector3.up);
-//			else if (transform.position.y > _playerObject.transform.position.y + 20.0f) transform.Translate (Vector3.down);
-			//transform.LookAt (_playerObject.transform);
-			//transform.rotation = Quaternion.Euler (new Vector3(_playerObject.transform.rotation.x, transform.rotation.y, _playerObject.transform.rotation.z));
-			transform.rotation = Quaternion.LookRotation(transform.position - _playerObject.transform.position);
+			//transform.rotation = Quaternion.LookRotation(transform.position - _playerObject.transform.position);
 		}
+	}
+
+	public void SetMoveNormally(bool moveNormally) {
+		_moveNormally = moveNormally;
+	}
+
+	public void SetEndPositionForLerp(Vector3 endPosition) {
+		_endPosition = new Vector3 (endPosition.x, endPosition.y, endPosition.z - 800.0f);
 	}
 }

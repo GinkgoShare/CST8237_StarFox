@@ -5,18 +5,9 @@ public class BarrelRoll : MonoBehaviour {
 
 	public float speed;
 	public GameObject ship;
-	
-	// Update is called once per frame
+
 	void FixedUpdate () {
-
-//		if (_inBarrelRole) {
-//			_elapsedTime += Time.deltaTime * velocity;
-//			float currentProgress = _elapsedTime / movementTime;
-//			//transform.rotation = Quaternion.Lerp (this.transform.rotation, _endRotation, currentProgress);
-//			transform.position = Vector3.Lerp (this.transform.position, _endPosition, currentProgress);
-//		}
-
-		if (Input.GetKey (KeyCode.X)) {
+		if (Input.GetKey (KeyCode.X) && (Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.RightArrow))) {
 			if (ship.transform.parent == null) ship.transform.parent = this.transform;
 
 			float moveVertical = Input.GetAxis ("Vertical");

@@ -35,21 +35,17 @@ public class DestroyByContact : MonoBehaviour
 			Instantiate(explosion, transform.position, transform.rotation);
 		}
 
-		gameController.AddScore(scoreValue);
+		//gameController.AddScore(scoreValue);
 
 		if (other.tag == "Player")
 		{
 			Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
-			gameController.GameOver();
+			//gameController.GameOver();
 		}
 
 		if (gameObject.name.StartsWith("Enemy Ship"))
 		{
-			gameController.OnEnemyKilled();
-		}
-		else if (gameObject.name.StartsWith ("Asteroid"))
-		{
-			gameController.OnAsteroidDestroyed();
+			//gameController.OnEnemyKilled();
 		}
 
 		Destroy (other.gameObject);

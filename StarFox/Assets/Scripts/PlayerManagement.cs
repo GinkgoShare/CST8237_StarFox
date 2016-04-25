@@ -7,39 +7,27 @@ public class PlayerManagement : MonoBehaviour {
 	public float tiltX;
 	public float tiltY;
 	public float velocity;
+	public float fireRate;
+	public float enemySpawnRate;
 
 	public Text scoreText;
 
-	public GameObject ring;
 	public GameObject mainCamera;
 	public GameObject barrelRoller;
 
-	public float fireRate;
+	public GameObject enemy;
 	public GameObject shotLeft;
 	public GameObject shotRight;
 	public Transform shotSpawnLeft;
 	public Transform shotSpawnRight;
+	public Transform enemySpawnLeft;
+	public Transform enemySpawnRight;
 
 	private int _score = 0;
-	private float _nextFire = 0.5f;
-
-	void Start() {
-		GameObject parent = this.gameObject;
-		for (int i = 0; i < 50; i++) {
-			GameObject newRing = (GameObject)Instantiate (
-				ring, 
-				new Vector3 (
-					Random.Range((parent.transform.position.x - 200.0f), (parent.transform.position.x + 200.0f)),
-					//Mathf.Clamp (parent.transform.position.x, (parent.transform.position.x - 200.0f), (parent.transform.position.x + 200.0f)),
-					Random.Range((parent.transform.position.y - 200.0f), (parent.transform.position.y + 200.0f)),
-					//Mathf.Clamp (parent.transform.position.y, (parent.transform.position.y - 200.0f), (parent.transform.position.y + 200.0f)),
-					parent.transform.position.z - 400.0f
-				),
-				ring.transform.rotation
-			);
-			parent = newRing;
-		}
-	}
+	private bool _isEnemyLeft = false;
+	private float _nextFire;
+	private float _nextEnemySpawn;
+	private bool _shouldSpawnEnemies = false;
 
 	void FixedUpdate() {
 		float moveVertical = Input.GetAxis ("Vertical");
@@ -84,6 +72,15 @@ public class PlayerManagement : MonoBehaviour {
 			shot.GetComponent<Rigidbody> ().velocity = -transform.forward * 600.0f;
 			//shot.transform.parent = this.transform;
 		}
+		if (Time.time > _nextEnemySpawn) {
+			GameObject shot = Instantiate (
+				enemy, 
+				(_isEnemyLeft ? enemySpawnLeft.position : enemySpawnRight.position), 
+				Quaternion.identity
+			) as GameObject;
+			_nextEnemySpawn = Time.time + enemySpawnRate;
+			_isEnemyLeft = !_isEnemyLeft;
+		}
 	}
 
 //	void OnCollisionEnter(Collision other) {
@@ -96,11 +93,12 @@ public class PlayerManagement : MonoBehaviour {
 //	}
 
 	void OnTriggerEnter(Collider other) {
-		Debug.Log ("In collision");
 		if (other.gameObject.CompareTag ("Powerup1")) {
-			Debug.Log ("In collision");
 			_score += 25;
+			//other.gameObject.SetActive (false);
 			scoreText.text = string.Format ("{0:000000}", _score);
+		} else if (other.gameObject.CompareTag ("BoltEnemy")) {
+			this.gameObject.SetActive (false);
 		}
 	}
 }
